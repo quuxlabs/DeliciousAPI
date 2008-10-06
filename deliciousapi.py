@@ -46,7 +46,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.3"
+__version__ = "1.5.4"
 
 import base64
 import cgi
@@ -135,7 +135,7 @@ class DeliciousUser(object):
         total_tags = {}
         for url, tags, title, comment, timestamp in self.bookmarks:
             for tag in tags:
-                total_tags[tag] = total_tags.get(tag, 0) + 1 
+                total_tags[tag] = total_tags.get(tag, 0) + 1
         return total_tags
     tags = property(fget=get_tags, doc="Returns a dictionary mapping tags to their tag count")
 
@@ -504,7 +504,7 @@ class DeliciousAPI(object):
             data = self._query(path)
             path = None
             if data:
-                # extract bookmarks for current page
+                # extract bookmarks from current page
                 if url:
                     bookmarks.extend(self._extract_bookmarks_from_url_history(data))
                 else:
@@ -696,6 +696,7 @@ class DeliciousAPI(object):
                 path = "/v2/json/%s?count=100" % username
                 data = self._query(path, host="feeds.delicious.com", user=username)
                 if data:
+                    posts = []
                     try:
                         posts = simplejson.loads(data)
                     except TypeError:
@@ -735,6 +736,125 @@ class DeliciousAPI(object):
                 #       falling back to scraping the delicous.com website
                 user.bookmarks = self.get_bookmarks(username=username, max_bookmarks=max_bookmarks, sleep_seconds=sleep_seconds)
         return user
+
+    def get_urls(self, tag=None, popular=True, max_urls=100, sleep_seconds=1):
+        """
+        Returns the list of URLs (of web documents) for a given tag.
+
+        This is very similar to parsing Delicious' RSS/JSON feeds directly,
+        but this function will return up to 2,000 links compared to a maximum
+        of 100 links when using the official feeds (with query parameter
+        count=100).
+
+        The return list of links will be sorted by recency in descending order,
+        i.e. newest items first.
+
+        @param tag: Retrieve links which have been tagged with the given tag.
+            If tag is not set (default), links will be retrieved from the
+            Delicious front page (aka "delicious hotlist").
+        @param type: unicode or str
+
+        @param popular: If true (default), retrieve only popular links (i.e.
+            /popular/<tag>). Otherwise, the most recent links tagged with
+            the given tag will be retrieved (i.e. /tag/<tag>).
+
+            Note that if you set popular to False, the returned list of URLs
+            might contain duplicate items. This is due to the way Delicious'
+            creates its /tag/<tag> web pages. So if you need a certain
+            number of unique URLs, you have to take care of that in your
+            own code.
+        @param type: bool
+
+        @param sleep_seconds: Wait the specified number of seconds between
+            subsequent queries in case that there are multiple pages of
+            bookmarks for the given url. Must be greater than or equal to 1
+            to comply with delicious' Terms of Use. The default value is 1.
+            See also parameter 'max_urls'.
+        @param type: int
+
+        """
+        assert sleep_seconds >= 1
+        urls = []
+        path = None
+        if max_urls > 0 and max_urls <= 100:
+            # use official JSON feeds
+            #http://feeds.delicious.com/v2/json/tag/photography?count=200
+            max_json_count = 100
+            if tag:
+                # tag-specific JSON feed
+                if popular:
+                    path = "/v2/json/popular/%s?count=%d" % (tag, max_json_count)
+                else:
+                    path = "/v2/json/tag/%s?count=%d" % (tag, max_json_count)
+            else:
+                # delicious.com hotlist
+                path = "/v2/json/?count=%d" % (max_json_count)
+            data = self._query(path, host="feeds.delicious.com")
+            if data:
+                posts = []
+                try:
+                    posts = simplejson.loads(data)
+                except TypeError:
+                    pass
+
+                for post in posts:
+                    # url
+                    try:
+                        url = post['u']
+                        if url:
+                            urls.append(url)
+                    except KeyError:
+                        pass
+        else:
+            # maximum number of urls/posts delicious.com will display
+            # per page on its website
+            max_html_count = 100
+            # maximum number of pages that delicious.com will display;
+            # currently, the maximum number of pages is 20. Delicious.com
+            # allows to go beyond page 20 via pagination, but page N (for
+            # N > 20) will always display the same content as page 20.
+            max_html_pages = 20
+
+            if popular:
+                path = "/popular/%s?setcount=%d" % (tag, max_html_count)
+            else:
+                path = "/tag/%s?setcount=%d" % (tag, max_html_count)
+
+            page_index = 1
+            urls = []
+            while path and page_index <= max_html_pages:
+                data = self._query(path)
+                path = None
+                if data:
+                    # extract urls from current page
+                    soup = BeautifulSoup(data)
+                    links = soup.findAll("a", attrs={"class": "taggedlink"})
+                    for link in links:
+                        try:
+                            url = link['href']
+                            if url:
+                                urls.append(url)
+                        except KeyError:
+                            pass
+
+                    # check if there are more multiple pages of urls
+                    soup = BeautifulSoup(data)
+                    paginations = soup.findAll("div", id="pagination")
+                    if paginations:
+                        # find next path
+                        nexts = paginations[0].findAll("a", attrs={ "class": "pn next" })
+                        if nexts and (max_urls == 0 or len(urls) < max_urls) and len(urls) > 0:
+                            # e.g. /url/2bb293d594a93e77d45c2caaf120e1b1?show=all&page=2
+                            path = nexts[0]['href']
+                            path += "&setcount=%d" % max_html_count
+                            page_index += 1
+                            # wait one second between queries to be compliant with
+                            # delicious' Terms of Use
+                            time.sleep(sleep_seconds)
+        if max_urls > 0:
+            return urls[:max_urls]
+        else:
+            return urls
 
 
     def get_tags_of_user(self, username):
