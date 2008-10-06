@@ -46,7 +46,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.4"
+__version__ = "1.5.4.1"
 
 import base64
 import cgi
@@ -748,6 +748,10 @@ class DeliciousAPI(object):
 
         The return list of links will be sorted by recency in descending order,
         i.e. newest items first.
+        
+        Note that even when setting max_urls, get_urls() cannot guarantee that
+        it can retrieve *at least* this many URLs. It is really just an upper
+        bound.
 
         @param tag: Retrieve links which have been tagged with the given tag.
             If tag is not set (default), links will be retrieved from the
@@ -776,7 +780,7 @@ class DeliciousAPI(object):
         assert sleep_seconds >= 1
         urls = []
         path = None
-        if max_urls > 0 and max_urls <= 100:
+        if tag is None or (tag is not None and max_urls > 0 and max_urls <= 100):
             # use official JSON feeds
             #http://feeds.delicious.com/v2/json/tag/photography?count=200
             max_json_count = 100
