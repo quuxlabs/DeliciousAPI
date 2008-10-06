@@ -748,7 +748,7 @@ class DeliciousAPI(object):
 
         The return list of links will be sorted by recency in descending order,
         i.e. newest items first.
-        
+
         Note that even when setting max_urls, get_urls() cannot guarantee that
         it can retrieve *at least* this many URLs. It is really just an upper
         bound.
