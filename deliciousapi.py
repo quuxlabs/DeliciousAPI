@@ -46,7 +46,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.4.1"
+__version__ = "1.5.4.2"
 
 import base64
 import cgi
@@ -768,6 +768,14 @@ class DeliciousAPI(object):
             number of unique URLs, you have to take care of that in your
             own code.
         @param type: bool
+
+        @param max_urls: Retrieve at most max_urls links. The default is 100,
+            which is the maximum number of links that can be retrieved by
+            parsing the official JSON feeds. The maximum value of max_urls
+            in practice is 2000 (currently). If it is set higher, Delicious
+            will return the same links over and over again, giving lots of
+            duplicate items.
+        @param type: int
 
         @param sleep_seconds: Wait the specified number of seconds between
             subsequent queries in case that there are multiple pages of
