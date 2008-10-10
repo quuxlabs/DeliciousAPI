@@ -46,7 +46,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.4.2"
+__version__ = "1.5.4.3"
 
 import base64
 import cgi
@@ -395,6 +395,8 @@ class DeliciousAPI(object):
                 urlinfo = simplejson.loads(data)
                 if urlinfo:
                     urlinfo = urlinfo[0]
+                else:
+                    urlinfo = {}
             except TypeError:
                 pass
             try:
