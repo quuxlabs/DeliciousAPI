@@ -5,7 +5,7 @@
 
     * getting a url's full public bookmarking history including
         * users who bookmarked the url including tags used for such bookmarks
-      	  and the creation time of the bookmark (up to YYYY-MM-DD granularity)
+          and the creation time of the bookmark (up to YYYY-MM-DD granularity)
         * top tags (up to a maximum of 10) including tag count
         * title as stored on delicious.com
         * total number of bookmarks/users for this url at delicious.com
@@ -33,6 +33,9 @@
 
     More information about this module can be found at
     http://www.michael-noll.com/wiki/Del.icio.us_Python_API
+
+    Changelog is available at
+    http://code.michael-noll.com/?p=deliciousapi;a=log
 
     Copyright 2006-2008 Michael G. Noll <http://www.michael-noll.com/>
 
