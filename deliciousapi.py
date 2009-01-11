@@ -323,6 +323,7 @@ class DeliciousAPI(object):
                 f = opener.open(url)
                 data = f.read()
                 f.close()
+                break
             except urllib2.HTTPError, e:
                 if e.code == 301:
                     raise DeliciousMovedPermanentlyWarning, "delicious.com status %s - url moved permanently" % e.code
