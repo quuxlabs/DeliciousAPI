@@ -37,12 +37,12 @@
     Changelog is available at
     http://code.michael-noll.com/?p=deliciousapi;a=log
 
-    Copyright 2006-2008 Michael G. Noll <http://www.michael-noll.com/>
+    Copyright 2006-2009 Michael G. Noll <http://www.michael-noll.com/>
 
 """
 
 __author__ = "Michael G. Noll"
-__copyright__ = "(c) 2006-2008 Michael G. Noll"
+__copyright__ = "(c) 2006-2009 Michael G. Noll"
 __description__ = "Unofficial Python API for retrieving data from del.icio.us / delicious.com"
 __email__ = "coding[AT]michael-REMOVEME-noll[DOT]com"
 __license__ = "GPLv2"
