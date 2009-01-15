@@ -732,6 +732,11 @@ class DeliciousAPI(object):
                             tags = [u"system:unfiled"]
                         # comment / notes
                         try:
+                            comment = post['n']
+                        except KeyError:
+                            pass
+                        # bookmark creation time
+                        try:
                             timestamp = datetime.datetime.strptime(post['dt'], "%Y-%m-%dT%H:%M:%SZ")
                         except KeyError:
                             pass
