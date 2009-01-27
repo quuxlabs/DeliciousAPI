@@ -417,7 +417,7 @@ class DeliciousAPI(object):
                 pass
             try:
                 document.total_bookmarks = int(urlinfo['total_posts'])
-            except KeyError, ValueError:
+            except (KeyError, ValueError):
                 pass
             document.bookmarks = self.get_bookmarks(url=url, max_bookmarks=max_bookmarks, sleep_seconds=sleep_seconds)
 
