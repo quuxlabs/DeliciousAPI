@@ -489,6 +489,15 @@ class DeliciousAPI(object):
         # url XOR username
         assert bool(username) is not bool(url)
 
+        # maximum number of urls/posts delicious.com will display
+        # per page on its website
+        max_html_count = 100
+        # maximum number of pages that delicious.com will display;
+        # currently, the maximum number of pages is 20. Delicious.com
+        # allows to go beyond page 20 via pagination, but page N (for
+        # N > 20) will always display the same content as page 20.
+        max_html_pages = 20
+
         path = None
         if url:
             m = md5.new(url)
@@ -500,13 +509,14 @@ class DeliciousAPI(object):
         elif username:
             # path will change later on if there are multiple pages of boomarks
             # for the given username
-            path = "/%s?setcount=100" % username
+            path = "/%s?setcount=%d" % (username, max_html_count)
         else:
             raise Exception('You must specify either url or user.')
 
+
         page_index = 1
         bookmarks = []
-        while path:
+        while path and page_index <= max_html_pages:
             data = self._query(path)
             path = None
             if data:
@@ -516,25 +526,31 @@ class DeliciousAPI(object):
                 else:
                     bookmarks.extend(self._extract_bookmarks_from_user_history(data))
 
-                # check if there are more multiple pages of bookmarks for this url
-                soup = BeautifulSoup(data)
-                paginations = soup.findAll("div", id="pagination")
-                if paginations:
-                    # find next path
-                    nexts = paginations[0].findAll("a", attrs={ "class": "pn next" })
-                    if nexts and (max_bookmarks == 0 or len(bookmarks) < max_bookmarks) and len(bookmarks) > 0:
-                        # e.g. /url/2bb293d594a93e77d45c2caaf120e1b1?show=all&page=2
-                        path = nexts[0]['href']
-                        if username:
-                            path += "&setcount=100"
-                        page_index += 1
-                        # wait one second between queries to be compliant with
-                        # delicious' Terms of Use
-                        time.sleep(sleep_seconds)
+                # stop scraping if we already have as many bookmarks as we want
+                if len(bookmarks) >= max_bookmarks:
+                    break
+                else:
+                    # check if there are multiple pages of bookmarks for this
+                    # url on Delicious.com
+                    soup = BeautifulSoup(data)
+                    paginations = soup.findAll("div", id="pagination")
+                    if paginations:
+                        # find next path
+                        nexts = paginations[0].findAll("a", attrs={ "class": "pn next" })
+                        if nexts and (max_bookmarks == 0 or len(bookmarks) < max_bookmarks) and len(bookmarks) > 0:
+                            # e.g. /url/2bb293d594a93e77d45c2caaf120e1b1?show=all&page=2
+                            path = nexts[0]['href']
+                            if username:
+                                path += "&setcount=%d" % max_html_count
+                            page_index += 1
+                            # wait one second between queries to be compliant with
+                            # delicious' Terms of Use
+                            time.sleep(sleep_seconds)
         if max_bookmarks > 0:
             return bookmarks[:max_bookmarks]
         else:
             return bookmarks
+
 
     def _extract_bookmarks_from_url_history(self, data):
         bookmarks = []
@@ -773,6 +789,13 @@ class DeliciousAPI(object):
             /popular/<tag>). Otherwise, the most recent links tagged with
             the given tag will be retrieved (i.e. /tag/<tag>).
 
+            As of January 2009, it seems that Delicious.com modified the list
+            of popular tags to contain only up to a maximum of 15 URLs.
+            This also means that setting max_urls to values larger than 15
+            will not change the results of get_urls().
+            So if you are interested in more URLs, set the popular parameter
+            to false.
+
             Note that if you set popular to False, the returned list of URLs
             might contain duplicate items. This is due to the way Delicious'
             creates its /tag/<tag> web pages. So if you need a certain
@@ -851,7 +874,7 @@ class DeliciousAPI(object):
                 if data:
                     # extract urls from current page
                     soup = BeautifulSoup(data)
-                    links = soup.findAll("a", attrs={"class": "taggedlink"})
+                    links = soup.findAll("a", attrs={"class": re.compile("^taggedlink\s*")})
                     for link in links:
                         try:
                             url = link['href']
