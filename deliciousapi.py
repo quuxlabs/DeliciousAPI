@@ -597,7 +597,17 @@ class DeliciousAPI(object):
                     user_a = links[0]
                     spans = user_a.findAll('span')
                     if spans:
-                        user = spans[0].contents[0]
+                        try:
+                            user = spans[0].contents[0]
+                        except IndexError:
+                            # WORKAROUND: it seems there is a bug on Delicious.com where
+                            # sometimes a bookmark is shown in a URL history without any
+                            # associated Delicious username (username is empty); this could
+                            # be caused by special characters in the username or other things
+                            #
+                            # this problem of Delicious is very rare, so we just skip such
+                            # entries until they find a fix
+                            pass
                     bookmarks.append( (user, user_tags, comment, timestamp) )
 
         return bookmarks
