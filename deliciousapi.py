@@ -634,7 +634,9 @@ class DeliciousAPI(object):
                         date_str = spans[0].contents[0].strip()
                         timestamp =  datetime.datetime.strptime(date_str, '%d %b %y')
 
-                # extract comments
+                # extract url, title and comments
+                url = u""
+                title = u""
                 comment = u""
                 datas = bookmark_element.findAll("div", attrs={"class": "data"})
                 if datas:
