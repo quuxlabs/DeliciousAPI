@@ -787,7 +787,7 @@ class DeliciousAPI(object):
 
         Parameters:
             username:
-                The delicious.com username.
+                The Delicious.com username.
 
             password (optional, default: None)
                 The user's delicious.com password. If password is set,
@@ -803,7 +803,7 @@ class DeliciousAPI(object):
                 information as get_url() uses get_bookmarks() to
                 retrieve a url's bookmarking history.
 
-        Returns a DeliciousUser instance.
+        @return: DeliciousUser instance
 
         """
         assert username
