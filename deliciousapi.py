@@ -1,5 +1,5 @@
 """
-    Unofficial Python API for retrieving data from delicious.com.
+    Unofficial Python API for retrieving data from Delicious.com.
 
     This module provides the following features plus some more:
 
@@ -7,24 +7,24 @@
         * users who bookmarked the url including tags used for such bookmarks
           and the creation time of the bookmark (up to YYYY-MM-DD granularity)
         * top tags (up to a maximum of 10) including tag count
-        * title as stored on delicious.com
-        * total number of bookmarks/users for this url at delicious.com
+        * title as stored on Delicious.com
+        * total number of bookmarks/users for this url at Delicious.com
     * getting a user's full bookmark collection, including any private bookmarks
       if you know the corresponding password
     * getting a user's full public tagging vocabulary, i.e. tags and tag counts
     * HTTP proxy support
-    * updated to support delicious.com "version 2" (mini-relaunch as of August 2008)
+    * updated to support Delicious.com "version 2" (mini-relaunch as of August 2008)
 
-    The official delicious.com API and the JSON/RSS feeds do not provide all
+    The official Delicious.com API and the JSON/RSS feeds do not provide all
     the functionality mentioned above, and in such cases this module will query
-    the delicious.com *website* directly and extract the required information
+    the Delicious.com *website* directly and extract the required information
     by parsing the HTML code of the resulting web pages (a kind of poor man's
     web mining). The module is able to detect IP throttling, which is employed
-    by delicious.com to temporarily block abusive HTTP request behavior, and
+    by Delicious.com to temporarily block abusive HTTP request behavior, and
     will raise a custom Python error to indicate that. Please be a nice netizen
-    and do not stress the delicious.com service more than necessary.
+    and do not stress the Delicious.com service more than necessary.
 
-    It is strongly advised that you read the delicious.com Terms of Use
+    It is strongly advised that you read the Delicious.com Terms of Use
     before using this Python module. In particular, read section 5
     'Intellectual Property'.
 
@@ -43,7 +43,7 @@
 
 __author__ = "Michael G. Noll"
 __copyright__ = "(c) 2006-2009 Michael G. Noll"
-__description__ = "Unofficial Python API for retrieving data from del.icio.us / delicious.com"
+__description__ = "Unofficial Python API for retrieving data from del.icio.us / Delicious.com"
 __email__ = "coding[AT]michael-REMOVEME-noll[DOT]com"
 __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
@@ -104,7 +104,7 @@ class DeliciousUser(object):
             retrieved bookmarks. The tags represent a user's tagging vocabulary.
 
         username:
-            The delicious.com account name of the user.
+            The Delicious.com account name of the user.
 
     """
 
@@ -228,14 +228,14 @@ class DeliciousURL(object):
 
 class DeliciousAPI(object):
     """
-    This class provides a custom, unofficial API to the delicious.com service.
+    This class provides a custom, unofficial API to the Delicious.com service.
 
     Instead of using just the functionality provided by the official
-    delicious.com API (which has limited features), this class retrieves
-    information from the delicious.com website directly and extracts data from
+    Delicious.com API (which has limited features), this class retrieves
+    information from the Delicious.com website directly and extracts data from
     the web pages.
 
-    Note that delicious.com will block clients with too many queries in a
+    Note that Delicious.com will block clients with too many queries in a
     certain time frame (similar to their API throttling). So be a nice citizen
     and don't stress their website.
 
@@ -329,21 +329,21 @@ class DeliciousAPI(object):
                 break
             except urllib2.HTTPError, e:
                 if e.code == 301:
-                    raise DeliciousMovedPermanentlyWarning, "delicious.com status %s - url moved permanently" % e.code
+                    raise DeliciousMovedPermanentlyWarning, "Delicious.com status %s - url moved permanently" % e.code
                 if e.code == 302:
-                    raise DeliciousMovedTemporarilyWarning, "delicious.com status %s - url moved temporarily" % e.code
+                    raise DeliciousMovedTemporarilyWarning, "Delicious.com status %s - url moved temporarily" % e.code
                 elif e.code == 401:
-                    raise DeliciousUnauthorizedError, "delicious.com error %s - unauthorized (authentication failed?)" % e.code
+                    raise DeliciousUnauthorizedError, "Delicious.com error %s - unauthorized (authentication failed?)" % e.code
                 elif e.code == 403:
                     raise DeliciousForbiddenError, "Delicious.com error %s - forbidden" % e.code
                 elif e.code == 404:
-                    raise DeliciousNotFoundError, "delicious.com error %s - url not found" % e.code
+                    raise DeliciousNotFoundError, "Delicious.com error %s - url not found" % e.code
                 elif e.code == 500:
-                    raise Delicious500Error, "delicious.com error %s - server problem" % e.code
+                    raise Delicious500Error, "Delicious.com error %s - server problem" % e.code
                 elif e.code == 503 or e.code == 999:
-                    raise DeliciousThrottleError, "delicious.com error %s - unable to process request (your IP address has been throttled/blocked)" % e.code
+                    raise DeliciousThrottleError, "Delicious.com error %s - unable to process request (your IP address has been throttled/blocked)" % e.code
                 else:
-                    raise DeliciousUnknownError, "delicious.com error %s - unknown error" % e.code
+                    raise DeliciousUnknownError, "Delicious.com error %s - unknown error" % e.code
                 break
             except urllib2.URLError, e:
                 time.sleep(self.wait_seconds)
@@ -358,7 +358,7 @@ class DeliciousAPI(object):
 
 
     def get_url(self, url, max_bookmarks=50, sleep_seconds=1):
-        """Returns a DeliciousURL instance representing the delicious.com history of url.
+        """Returns a DeliciousURL instance representing the Delicious.com history of url.
 
         Generally, this method is what you want for getting title, bookmark, tag,
         and user information about a URL.
@@ -612,10 +612,10 @@ class DeliciousAPI(object):
         # url XOR username
         assert bool(username) is not bool(url)
 
-        # maximum number of urls/posts delicious.com will display
+        # maximum number of urls/posts Delicious.com will display
         # per page on its website
         max_html_count = 100
-        # maximum number of pages that delicious.com will display;
+        # maximum number of pages that Delicious.com will display;
         # currently, the maximum number of pages is 20. Delicious.com
         # allows to go beyond page 20 via pagination, but page N (for
         # N > 20) will always display the same content as page 20.
@@ -785,7 +785,7 @@ class DeliciousAPI(object):
 
 
     def get_user(self, username, password=None, max_bookmarks=50, sleep_seconds=1):
-        """Retrieves a user's bookmarks from delicious.com.
+        """Retrieves a user's bookmarks from Delicious.com.
 
         If a correct username AND password are supplied, a user's *full*
         bookmark collection (which also includes private bookmarks) is
@@ -805,8 +805,8 @@ class DeliciousAPI(object):
                 The Delicious.com username.
 
             password (optional, default: None)
-                The user's delicious.com password. If password is set,
-                all communication with delicious.com is SSL-encrypted.
+                The user's Delicious.com password. If password is set,
+                all communication with Delicious.com is SSL-encrypted.
 
             max_bookmarks (optional, default: 50)
                 See the documentation of get_bookmarks() for more
@@ -826,7 +826,7 @@ class DeliciousAPI(object):
         bookmarks = []
         if password:
             # We have username AND password, so we call
-            # the official delicious.com API.
+            # the official Delicious.com API.
             path = "/v1/posts/all"
             data = self._query(path, host="api.del.icio.us", use_ssl=True, user=username, password=password)
             if data:
@@ -847,7 +847,7 @@ class DeliciousAPI(object):
             # the user's JSON feed. However, the feed is restricted
             # to the most recent public bookmarks of the user, which
             # is about 100 if any. So if we need more than 100, we start
-            # scraping the delicious.com website directly
+            # scraping the Delicious.com website directly
             if max_bookmarks > 0 and max_bookmarks <= 100:
                 path = "/v2/json/%s?count=100" % username
                 data = self._query(path, host="feeds.delicious.com", user=username)
@@ -958,7 +958,6 @@ class DeliciousAPI(object):
         path = None
         if tag is None or (tag is not None and max_urls > 0 and max_urls <= 100):
             # use official JSON feeds
-            #http://feeds.delicious.com/v2/json/tag/photography?count=200
             max_json_count = 100
             if tag:
                 # tag-specific JSON feed
@@ -967,7 +966,7 @@ class DeliciousAPI(object):
                 else:
                     path = "/v2/json/tag/%s?count=%d" % (tag, max_json_count)
             else:
-                # delicious.com hotlist
+                # Delicious.com hotlist
                 path = "/v2/json/?count=%d" % (max_json_count)
             data = self._query(path, host="feeds.delicious.com")
             if data:
@@ -986,10 +985,10 @@ class DeliciousAPI(object):
                     except KeyError:
                         pass
         else:
-            # maximum number of urls/posts delicious.com will display
+            # maximum number of urls/posts Delicious.com will display
             # per page on its website
             max_html_count = 100
-            # maximum number of pages that delicious.com will display;
+            # maximum number of pages that Delicious.com will display;
             # currently, the maximum number of pages is 20. Delicious.com
             # allows to go beyond page 20 via pagination, but page N (for
             # N > 20) will always display the same content as page 20.
@@ -1039,7 +1038,7 @@ class DeliciousAPI(object):
 
     def get_tags_of_user(self, username):
         """
-        Retrieves user's public tags and their tag counts from delicious.com.
+        Retrieves user's public tags and their tag counts from Delicious.com.
         The tags represent a user's full public tagging vocabulary.
 
         DeliciousAPI uses the official JSON feed of the user. We could use
@@ -1092,42 +1091,42 @@ class DeliciousAPI(object):
 
 
 class DeliciousError(Exception):
-    """Used to indicate that an error occurred when trying to access delicious.com via its API."""
+    """Used to indicate that an error occurred when trying to access Delicious.com via its API."""
 
 class DeliciousWarning(Exception):
-    """Used to indicate a warning when trying to access delicious.com via its API.
+    """Used to indicate a warning when trying to access Delicious.com via its API.
 
     Warnings are raised when it is useful to alert the user of some condition
     where that condition doesn't warrant raising an exception and terminating
-    the program. For example, we issue a warning when delicious.com returns a
+    the program. For example, we issue a warning when Delicious.com returns a
     HTTP status code for redirections (3xx).
     """
 
 class DeliciousThrottleError(DeliciousError):
-    """Used to indicate that the client computer (i.e. its IP address) has been temporarily blocked by delicious.com."""
+    """Used to indicate that the client computer (i.e. its IP address) has been temporarily blocked by Delicious.com."""
     pass
 
 class DeliciousUnknownError(DeliciousError):
-    """Used to indicate that delicious.com returned an (HTTP) error which we don't know how to handle yet."""
+    """Used to indicate that Delicious.com returned an (HTTP) error which we don't know how to handle yet."""
     pass
 
 class DeliciousUnauthorizedError(DeliciousError):
-    """Used to indicate that delicious.com returned a 401 Unauthorized error.
+    """Used to indicate that Delicious.com returned a 401 Unauthorized error.
 
     Most of the time, the user credentials for acessing restricted (official)
-    delicious.com API functions are incorrect.
+    Delicious.com API functions are incorrect.
 
     """
     pass
 
 class DeliciousForbiddenError(DeliciousError):
-    """Used to indicate that delicious.com returned a 403 Forbidden error.
+    """Used to indicate that Delicious.com returned a 403 Forbidden error.
     """
     pass
 
 
 class DeliciousNotFoundError(DeliciousError):
-    """Used to indicate that delicious.com returned a 404 Not Found error.
+    """Used to indicate that Delicious.com returned a 404 Not Found error.
 
     Most of the time, retrying some seconds later fixes the problem
     (because we only query existing pages with this API).
@@ -1136,7 +1135,7 @@ class DeliciousNotFoundError(DeliciousError):
     pass
 
 class Delicious500Error(DeliciousError):
-    """Used to indicate that delicious.com returned a 500 error.
+    """Used to indicate that Delicious.com returned a 500 error.
 
     Most of the time, retrying some seconds later fixes the problem
     (because we only query existing pages with this API).
@@ -1145,11 +1144,11 @@ class Delicious500Error(DeliciousError):
     pass
 
 class DeliciousMovedPermanentlyWarning(DeliciousWarning):
-    """Used to indicate that delicious.com returned a 301 Found (Moved Permanently) redirection."""
+    """Used to indicate that Delicious.com returned a 301 Found (Moved Permanently) redirection."""
     pass
 
 class DeliciousMovedTemporarilyWarning(DeliciousWarning):
-    """Used to indicate that delicious.com returned a 302 Found (Moved Temporarily) redirection."""
+    """Used to indicate that Delicious.com returned a 302 Found (Moved Temporarily) redirection."""
     pass
 
 __all__ = ['DeliciousAPI', 'DeliciousURL', 'DeliciousError', 'DeliciousThrottleError', 'DeliciousUnauthorizedError', 'DeliciousUnknownError', 'DeliciousNotFoundError' , 'Delicious500Error', 'DeliciousMovedTemporarilyWarning']
@@ -1158,7 +1157,7 @@ if __name__ == "__main__":
     d = DeliciousAPI()
     max_bookmarks = 50
     url = 'http://www.michael-noll.com/wiki/Del.icio.us_Python_API'
-    print "Retrieving delicious.com information about url"
+    print "Retrieving Delicious.com information about url"
     print "'%s'" % url
     print "Note: This might take some time..."
     print "========================================================="
