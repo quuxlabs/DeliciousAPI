@@ -334,6 +334,8 @@ class DeliciousAPI(object):
                     raise DeliciousMovedTemporarilyWarning, "delicious.com status %s - url moved temporarily" % e.code
                 elif e.code == 401:
                     raise DeliciousUnauthorizedError, "delicious.com error %s - unauthorized (authentication failed?)" % e.code
+                elif e.code == 403:
+                    raise DeliciousForbiddenError, "Delicious.com error %s - forbidden" % e.code
                 elif e.code == 404:
                     raise DeliciousNotFoundError, "delicious.com error %s - url not found" % e.code
                 elif e.code == 500:
@@ -458,16 +460,24 @@ class DeliciousAPI(object):
 
         @return: Tuple of two lists ([<followees>, [<followers>]), where each list
             contains tuples of (username, tracking_since_timestamp).
+            If a network is set as private, i.e. hidden from public view,
+            (None, None) is returned.
+            If a network is public but empty, ([], []) is returned.
 
         """
         assert username
-        followees = []
-        followers = []
+        followees = followers = None
 
         # followees (network members)
         path = "/v2/json/networkmembers/%s" % username
-        data = self._query(path, host="feeds.delicious.com")
+        data = None
+        try:
+            data = self._query(path, host="feeds.delicious.com")
+        except DeliciousForbiddenError:
+            pass
         if data:
+            followees = []
+
             users = []
             try:
                 users = simplejson.loads(data)
@@ -499,8 +509,14 @@ class DeliciousAPI(object):
 
         # followers (network fans)
         path = "/v2/json/networkfans/%s" % username
-        data = self._query(path, host="feeds.delicious.com")
+        data = None
+        try:
+            data = self._query(path, host="feeds.delicious.com")
+        except DeliciousForbiddenError:
+            pass
         if data:
+            followers = []
+
             users = []
             try:
                 users = simplejson.loads(data)
@@ -1103,6 +1119,12 @@ class DeliciousUnauthorizedError(DeliciousError):
 
     """
     pass
+
+class DeliciousForbiddenError(DeliciousError):
+    """Used to indicate that delicious.com returned a 403 Forbidden error.
+    """
+    pass
+
 
 class DeliciousNotFoundError(DeliciousError):
     """Used to indicate that delicious.com returned a 404 Not Found error.
