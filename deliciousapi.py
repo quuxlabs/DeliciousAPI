@@ -424,6 +424,113 @@ class DeliciousAPI(object):
 
         return document
 
+    def get_network(self, username):
+        """
+        Returns the user's list of followees and followers.
+
+        Followees are users in his Delicious "network", i.e. those users whose
+        bookmark streams he's subscribed to. Followers are his Delicious.com
+        "fans", i.e. those users who have subscribed to the given user's
+        bookmark stream).
+
+        Example:
+
+                A -------->   --------> C
+                D --------> B --------> E
+                F -------->   --------> F
+
+            followers               followees
+            of B                    of B
+
+        Arrows from user A to user B denote that A has subscribed to B's
+        bookmark stream, i.e. A is "following" or "tracking" B.
+
+        Note that user F is both a followee and a follower of B, i.e. F tracks
+        B and vice versa. In Delicious.com terms, F is called a "mutual fan"
+        of B.
+
+        Comparing this network concept to information retrieval, one could say
+        that followers are incoming links and followees outgoing links of B.
+
+        @param username: Delicous.com username for which network information is
+            retrieved.
+        @type: unicode/str
+
+        @return: Tuple of two lists ([<followees>, [<followers>]), where each list
+            contains tuples of (username, tracking_since_timestamp).
+
+        """
+        assert username
+        followees = []
+        followers = []
+
+        # followees (network members)
+        path = "/v2/json/networkmembers/%s" % username
+        data = self._query(path, host="feeds.delicious.com")
+        if data:
+            users = []
+            try:
+                users = simplejson.loads(data)
+            except TypeError:
+                pass
+
+            uname = tracking_since = None
+
+            for user in users:
+                # followee's username
+                try:
+                    uname = user['user']
+                except KeyError:
+                    pass
+                # try to convert uname to Unicode
+                if uname:
+                    try:
+                        # we assume UTF-8 encoding
+                        uname = uname.decode('utf-8')
+                    except UnicodeDecodeError:
+                        pass
+                # time when the given user started tracking this user
+                try:
+                    tracking_since = datetime.datetime.strptime(user['dt'], "%Y-%m-%dT%H:%M:%SZ")
+                except KeyError:
+                    pass
+                if uname:
+                    followees.append( (uname, tracking_since) )
+
+        # followers (network fans)
+        path = "/v2/json/networkfans/%s" % username
+        data = self._query(path, host="feeds.delicious.com")
+        if data:
+            users = []
+            try:
+                users = simplejson.loads(data)
+            except TypeError:
+                pass
+
+            uname = tracking_since = None
+
+            for user in users:
+                # fan's username
+                try:
+                    uname = user['user']
+                except KeyError:
+                    pass
+                # try to convert uname to Unicode
+                if uname:
+                    try:
+                        # we assume UTF-8 encoding
+                        uname = uname.decode('utf-8')
+                    except UnicodeDecodeError:
+                        pass
+                # time when fan started tracking the given user
+                try:
+                    tracking_since = datetime.datetime.strptime(user['dt'], "%Y-%m-%dT%H:%M:%SZ")
+                except KeyError:
+                    pass
+                if uname:
+                    followers.append( (uname, tracking_since) )
+        return ( followees, followers )
+
     def get_bookmarks(self, url=None, username=None, max_bookmarks=50, sleep_seconds=1):
         """
         Returns the bookmarks of url or user, respectively.
