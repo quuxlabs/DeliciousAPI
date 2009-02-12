@@ -49,7 +49,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.10"
+__version__ = "1.5.11"
 
 import base64
 import cgi
