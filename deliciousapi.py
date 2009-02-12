@@ -566,7 +566,7 @@ class DeliciousAPI(object):
                 Setting max_bookmarks to 50 means that get_bookmarks() will retrieve
                 the 50 most recent bookmarks of the given url.
 
-                In the case of getting bookmarks of a url (url is set),
+                In the case of getting bookmarks of a URL (url is set),
                 get_bookmarks() will take *considerably* longer to run
                 for pages with lots of bookmarks when setting max_bookmarks
                 to a high number or when you completely disable the limit.
@@ -577,9 +577,9 @@ class DeliciousAPI(object):
                 also parameter 'sleep_seconds').
 
                 In the case of getting bookmarks of a user (username is set),
-                any values greater than 100 will be an order of magnitude slower
-                than values less than or equal to 100, because in the latter
-                case we use the official JSON feeds (fast!).
+                the same restrictions as for a URL apply with the exception
+                that we can retrieve up to 100 bookmarks per HTTP query
+                (instead of only up to 50 per HTTP query for a URL).
 
             sleep_seconds (optional, default: 1)
                 Wait the specified number of seconds between subsequent
@@ -619,7 +619,6 @@ class DeliciousAPI(object):
             path = "/%s?setcount=%d" % (username, max_html_count)
         else:
             raise Exception('You must specify either url or user.')
-
 
         page_index = 1
         bookmarks = []
