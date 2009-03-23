@@ -91,7 +91,7 @@ class DeliciousUser(object):
 
     Variables:
         bookmarks:
-            A list of (user, tags, title, comment, timestamp) tuples representing
+            A list of (url, tags, title, comment, timestamp) tuples representing
             a user's bookmark collection.
 
             url is a 'unicode'
