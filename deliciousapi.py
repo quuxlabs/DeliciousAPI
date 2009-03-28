@@ -50,7 +50,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.12"
+__version__ = "1.5.13"
 
 import base64
 import cgi
@@ -118,7 +118,8 @@ class DeliciousUser(object):
         total_tag_count = 0
         total_tags = set()
         for url, tags, title, comment, timestamp in self.bookmarks:
-            total_tag_count += len(tags)
+            if tags:
+                total_tag_count += len(tags)
             for tag in tags:
                 total_tags.add(tag)
         return "[%s] %d bookmarks, %d tags (%d unique)" % \
@@ -195,7 +196,8 @@ class DeliciousURL(object):
         total_tag_count = 0
         total_tags = set()
         for user, tags, comment, timestamp in self.bookmarks:
-            total_tag_count += len(tags)
+            if tags:
+                total_tag_count += len(tags)
             for tag in tags:
                 total_tags.add(tag)
         return "[%s] %d total bookmarks (= users), %d tags (%d unique), %d out of 10 max 'top' tags" % \
