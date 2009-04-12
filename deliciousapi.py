@@ -319,7 +319,7 @@ class DeliciousAPI(object):
         @type user: str
 
         @param password: The Delicious.com password of user, default: None.
-        @type password: str
+        @type password: unicode/str
 
         @param use_ssl: Whether to use SSL encryption or not, default: False.
         @type use_ssl: bool
