@@ -989,7 +989,7 @@ class DeliciousAPI(object):
         @param tag: Retrieve links which have been tagged with the given tag.
             If tag is not set (default), links will be retrieved from the
             Delicious.com front page (aka "delicious hotlist").
-        @param type: unicode/str
+        @type tag: unicode/str
 
         @param popular: If true (default), retrieve only popular links (i.e.
             /popular/<tag>). Otherwise, the most recent links tagged with
@@ -1007,7 +1007,7 @@ class DeliciousAPI(object):
             creates its /tag/<tag> Web pages. So if you need a certain
             number of unique URLs, you have to take care of that in your
             own code.
-        @param type: bool
+        @type popular: bool
 
         @param max_urls: Retrieve at most max_urls links. The default is 100,
             which is the maximum number of links that can be retrieved by
@@ -1015,7 +1015,7 @@ class DeliciousAPI(object):
             in practice is 2000 (currently). If it is set higher, Delicious
             will return the same links over and over again, giving lots of
             duplicate items.
-        @param type: int
+        @type max_urls: int
 
         @param sleep_seconds: Optional, default: 1.
             Wait the specified number of seconds between subsequent queries in
@@ -1023,7 +1023,7 @@ class DeliciousAPI(object):
             Must be greater than or equal to 1 to comply with Delicious.com's
             Terms of Use.
             See also parameter 'max_urls'.
-        @param type: int
+        @type sleep_seconds: int
 
         @return: The list of recent URLs (of web documents) tagged with a given tag.
 
