@@ -184,7 +184,7 @@ class DeliciousURL(object):
             Note that the value of total_bookmarks can be greater than the
             length of "bookmarks" depending on how much (detailed) bookmark
             data could be retrieved from Delicious.com.
-            
+
             Here's some more background information:
             The value of total_bookmarks is the "real" number of bookmarks of
             URL "url" stored at Delicious.com as reported by Delicious.com
@@ -1102,8 +1102,8 @@ class DeliciousAPI(object):
                             path = nexts[0]['href']
                             path += "&setcount=%d" % max_html_count
                             page_index += 1
-                            # wait one second between queries to be compliant with
-                            # delicious' Terms of Use
+                            # wait between queries to Delicious.com to be
+                            # compliant with its Terms of Use
                             time.sleep(sleep_seconds)
         if max_urls > 0:
             return urls[:max_urls]
@@ -1197,8 +1197,8 @@ class DeliciousUnknownError(DeliciousError):
 class DeliciousUnauthorizedError(DeliciousError):
     """Used to indicate that Delicious.com returned a 401 Unauthorized error.
 
-    Most of the time, the user credentials for acessing restricted (official)
-    Delicious.com API functions are incorrect.
+    Most of the time, the user credentials for accessing restricted functions
+    of the official Delicious.com API are incorrect.
 
     """
     pass
@@ -1221,8 +1221,7 @@ class DeliciousNotFoundError(DeliciousError):
 class Delicious500Error(DeliciousError):
     """Used to indicate that Delicious.com returned a 500 error.
 
-    Most of the time, retrying some seconds later fixes the problem
-    (because we only query existing pages with this API).
+    Most of the time, retrying some seconds later fixes the problem.
 
     """
     pass
