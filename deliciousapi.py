@@ -19,7 +19,7 @@
     The official Delicious.com API and the JSON/RSS feeds do not provide all
     the functionality mentioned above, and in such cases this module will query
     the Delicious.com *website* directly and extract the required information
-    by parsing the HTML code of the resulting web pages (a kind of poor man's
+    by parsing the HTML code of the resulting Web pages (a kind of poor man's
     web mining). The module is able to detect IP throttling, which is employed
     by Delicious.com to temporarily block abusive HTTP request behavior, and
     will raise a custom Python error to indicate that. Please be a nice netizen
@@ -44,13 +44,13 @@
 
 __author__ = "Michael G. Noll"
 __copyright__ = "(c) 2006-2009 Michael G. Noll"
-__description__ = "Unofficial Python API for retrieving data from del.icio.us / Delicious.com"
+__description__ = "Unofficial Python API for retrieving data from Delicious.com"
 __email__ = "coding[AT]michael-REMOVEME-noll[DOT]com"
 __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.14"
+__version__ = "1.5.15"
 
 import base64
 import cgi
@@ -215,6 +215,8 @@ class DeliciousURL(object):
         to put it is that 23 users used the tag 'foo' when
         bookmarking the URL.
 
+        @return: Dictionary mapping tags to their tag count.
+
         """
         total_tags = {}
         for user, tags, comment, timestamp in self.bookmarks:
@@ -236,7 +238,7 @@ class DeliciousAPI(object):
     Instead of using just the functionality provided by the official
     Delicious.com API (which has limited features), this class retrieves
     information from the Delicious.com website directly and extracts data from
-    the web pages.
+    the Web pages.
 
     Note that Delicious.com will block clients with too many queries in a
     certain time frame (similar to their API throttling). So be a nice citizen
@@ -253,27 +255,31 @@ class DeliciousAPI(object):
         ):
         """Set up the API module.
 
-        Parameters:
-            http_proxy (optional)
-                Use an HTTP proxy for HTTP connections. Proxy support for
-                HTTPS is not available yet.
-                Format: "hostname:port" (e.g., "localhost:8080")
+        @param http_proxy: Optional, default: "".
+            Use an HTTP proxy for HTTP connections. Proxy support for
+            HTTPS is not available yet.
+            Format: "hostname:port" (e.g., "localhost:8080")
+        @type: str
 
-            tries (optional, default: 3):
-                Try the specified number of times when downloading a
-                monitored document fails. tries must be >= 1.
-                See also wait_seconds.
+        @param tries: Optional, default: 3.
+            Try the specified number of times when downloading a monitored
+            document fails. tries must be >= 1. See also wait_seconds.
+        @type: int
 
-            wait_seconds (optional, default: 3):
-                Wait the specified number of seconds before re-trying to
-                download a monitored document. wait_seconds must be >= 0.
-                See also tries.
+        @param wait_seconds: Optional, default: 3.
+            Wait the specified number of seconds before re-trying to
+            download a monitored document. wait_seconds must be >= 0.
+            See also tries.
+        @type: int
 
-            user_agent (optional, default: "DeliciousAPI/<version> (+http://www.michael-noll.com/wiki/Del.icio.us_Python_API)")
-                Set the User-Agent HTTP Header.
+        @param user_agent: Optional, default: "DeliciousAPI/<version>
+            (+http://www.michael-noll.com/wiki/Del.icio.us_Python_API)".
+            The User-Agent HTTP Header to use when querying Delicous.com.
+        @type: str
 
-            timeout (optional, default: 30):
-                Set network timeout. timeout must be >= 0.
+        @param timeout: Optional, default: 30.
+            Set network timeout. timeout must be >= 0.
+        @type: int
 
         """
         assert tries >= 1
@@ -288,10 +294,25 @@ class DeliciousAPI(object):
 
 
     def _query(self, path, host="delicious.com", user=None, password=None, use_ssl=False):
-        """Queries delicious for information, specified by (query) path.
+        """Queries Delicious.com for information, specified by (query) path.
 
-        Returns None on errors (i.e. on all HTTP status other than 200).
-        On success, returns the content of the HTML response.
+        @param path: The HTTP query path.
+        @type: str
+
+        @param host: The host to query, default: "delicious.com".
+        @type: str
+
+        @param user: The Delicious.com username if any, default: None.
+        @type: str
+
+        @param password: The Delicious.com password of user, default: None.
+        @type: str
+
+        @param use_ssl: Whether to use SSL encryption or not, default: False.
+        @type: bool
+
+        @return: None on errors (i.e. on all HTTP status other than 200).
+            On success, returns the content of the HTML response.
 
         """
         opener = None
@@ -361,7 +382,8 @@ class DeliciousAPI(object):
 
 
     def get_url(self, url, max_bookmarks=50, sleep_seconds=1):
-        """Returns a DeliciousURL instance representing the Delicious.com history of url.
+        """
+        Returns a DeliciousURL instance representing the Delicious.com history of url.
 
         Generally, this method is what you want for getting title, bookmark, tag,
         and user information about a URL.
@@ -372,23 +394,28 @@ class DeliciousAPI(object):
         increases linearly with the number of 50-bookmarks-chunks; i.e.
         it will take 10 times longer to retrieve 500 bookmarks than 50.
 
-        Parameters:
-            url
-                The URL of the web document to be queried for.
+        @param url: The URL of the web document to be queried for.
+        @type: str
 
-            max_bookmarks (optional, default: 50)
-                See the documentation of get_bookmarks() for more
-                information as get_url() uses get_bookmarks() to
-                retrieve a url's bookmarking history.
+        @param max_bookmarks: Optional, default: 50.
+            See the documentation of get_bookmarks() for more information
+            as get_url() uses get_bookmarks() to retrieve a url's
+            bookmarking history.
+        @type: int
 
-            sleep_seconds (optional, default: 1)
-                See the documentation of get_bookmarks() for more
-                information as get_url() uses get_bookmarks() to
-                retrieve a url's bookmarking history.
+        @param sleep_seconds: Optional, default: 1.
+            See the documentation of get_bookmarks() for more information
+            as get_url() uses get_bookmarks() to retrieve a url's
+            bookmarking history. sleep_seconds must be >= 1 to comply with
+            Delicious.com's Terms of Use.
+        @type: int
+
+        @return: DeliciousURL instance representing the Delicious.com history
+            of url.
 
         """
         # we must wait at least 1 second between subsequent queries to
-        # comply with delicious' Terms of Use
+        # comply with Delicious.com's Terms of Use
         assert sleep_seconds >= 1
 
         document = DeliciousURL(url)
@@ -554,58 +581,62 @@ class DeliciousAPI(object):
         """
         Returns the bookmarks of url or user, respectively.
 
-        For urls, it returns a list of (user, tags, comment, timestamp) tuples.
-        For users, it returns a list of (url, tags, title, comment, timestamp) tuples.
-
-        Bookmarks are sorted "descendingly" by creation time, i.e. newer
-        bookmarks are first.
-
-        Delicious only returns up to 50 bookmarks per URL on its website.
+        Delicious.com only returns up to 50 bookmarks per URL on its website.
         This means that we have to do subsequent queries plus parsing if
         we want to retrieve more than 50. Roughly speaking, the processing
         time of get_bookmarks() increases linearly with the number of
         50-bookmarks-chunks; i.e. it will take 10 times longer to retrieve
         500 bookmarks than 50.
 
-        Parameters:
-            url
-                The URL of the web document to be queried for.
-                Cannot be used together with 'username'.
+        @param url: The URL of the web document to be queried for.
+            Cannot be used together with 'username'.
+        @type: str
 
-            username
-                The username to be queried for.
-                Cannot be used together with 'url'.
+        @param username: The Delicious.com username to be queried for.
+            Cannot be used together with 'url'.
+        @type: str
 
-            max_bookmarks (optional, default: 50)
-                Maximum number of bookmarks to retrieve. Set to 0 to disable
-                this limitation/the maximum and retrieve all available
-                bookmarks of the given url.
+        @param max_bookmarks: Optional, default: 50.
+            Maximum number of bookmarks to retrieve. Set to 0 to disable
+            this limitation/the maximum and retrieve all available
+            bookmarks of the given url.
 
-                Bookmarks are sorted so that newer bookmarks are first.
-                Setting max_bookmarks to 50 means that get_bookmarks() will retrieve
-                the 50 most recent bookmarks of the given url.
+            Bookmarks are sorted so that newer bookmarks are first.
+            Setting max_bookmarks to 50 means that get_bookmarks() will retrieve
+            the 50 most recent bookmarks of the given url.
 
-                In the case of getting bookmarks of a URL (url is set),
-                get_bookmarks() will take *considerably* longer to run
-                for pages with lots of bookmarks when setting max_bookmarks
-                to a high number or when you completely disable the limit.
-                Delicious returns only up to 50 bookmarks per result page,
-                so for example retrieving 250 bookmarks requires 5 HTTP
-                connections and parsing 5 HTML pages plus wait time between
-                queries (to comply with delicious' Terms of Use; see
-                also parameter 'sleep_seconds').
+            In the case of getting bookmarks of a URL (url is set),
+            get_bookmarks() will take *considerably* longer to run
+            for pages with lots of bookmarks when setting max_bookmarks
+            to a high number or when you completely disable the limit.
+            Delicious returns only up to 50 bookmarks per result page,
+            so for example retrieving 250 bookmarks requires 5 HTTP
+            connections and parsing 5 HTML pages plus wait time between
+            queries (to comply with delicious' Terms of Use; see
+            also parameter 'sleep_seconds').
 
-                In the case of getting bookmarks of a user (username is set),
-                the same restrictions as for a URL apply with the exception
-                that we can retrieve up to 100 bookmarks per HTTP query
-                (instead of only up to 50 per HTTP query for a URL).
+            In the case of getting bookmarks of a user (username is set),
+            the same restrictions as for a URL apply with the exception
+            that we can retrieve up to 100 bookmarks per HTTP query
+            (instead of only up to 50 per HTTP query for a URL).
+        @type: int
 
-            sleep_seconds (optional, default: 1)
+        @param sleep_seconds: Optional, default: 1.
                 Wait the specified number of seconds between subsequent
                 queries in case that there are multiple pages of bookmarks
-                for the given url. Must be greater than or equal to 1 to
-                comply with delicious' Terms of Use.
+                for the given url. sleep_seconds must be >= 1 to comply with
+                Delicious.com's Terms of Use.
                 See also parameter 'max_bookmarks'.
+        @type: int
+
+        @return: Returns the bookmarks of url or user, respectively.
+            For urls, it returns a list of (user, tags, comment, timestamp)
+            tuples.
+            For users, it returns a list of (url, tags, title, comment,
+            timestamp) tuples.
+
+            Bookmarks are sorted "descendingly" by creation time, i.e. newer
+            bookmarks come first.
 
         """
         # we must wait at least 1 second between subsequent queries to
@@ -678,6 +709,17 @@ class DeliciousAPI(object):
 
 
     def _extract_bookmarks_from_url_history(self, data):
+        """
+        Extracts user bookmarks from a URL's history page on Delicious.com.
+
+        The Python library BeautifulSoup is used to parse the HTML page.
+
+        @param data: The HTML source of a URL history Web page on Delicious.com.
+        @type: str
+
+        @return: list of user bookmarks of the corresponding URL
+
+        """
         bookmarks = []
         soup = BeautifulSoup(data)
 
@@ -738,6 +780,17 @@ class DeliciousAPI(object):
         return bookmarks
 
     def _extract_bookmarks_from_user_history(self, data):
+        """
+        Extracts a user's bookmarks from his user page on Delicious.com.
+
+        The Python library BeautifulSoup is used to parse the HTML page.
+
+        @param data: The HTML source of a user page on Delicious.com.
+        @type: str
+
+        @return: list of bookmarks of the corresponding user
+
+        """
         bookmarks = []
         soup = BeautifulSoup(data)
 
@@ -803,23 +856,26 @@ class DeliciousAPI(object):
         This function can be used to backup all of a user's bookmarks if
         called with a username and password.
 
-        Parameters:
-            username:
-                The Delicious.com username.
+        @param username: The Delicious.com username.
+        @type: unicode/str
 
-            password (optional, default: None)
-                The user's Delicious.com password. If password is set,
-                all communication with Delicious.com is SSL-encrypted.
+        @param password: Optional, default: None.
+            The user's Delicious.com password. If password is set,
+            all communication with Delicious.com is SSL-encrypted.
+        @type: unicode/str
 
-            max_bookmarks (optional, default: 50)
-                See the documentation of get_bookmarks() for more
-                information as get_url() uses get_bookmarks() to
-                retrieve a url's bookmarking history.
+        @param max_bookmarks: Optional, default: 50.
+            See the documentation of get_bookmarks() for more
+            information as get_url() uses get_bookmarks() to
+            retrieve a url's bookmarking history.
+        @type: int
 
-            sleep_seconds (optional, default: 1)
-                See the documentation of get_bookmarks() for more
-                information as get_url() uses get_bookmarks() to
-                retrieve a url's bookmarking history.
+        @param sleep_seconds: Optional, default: 1.
+            See the documentation of get_bookmarks() for more information as
+            get_url() uses get_bookmarks() to retrieve a url's bookmarking
+            history. sleep_seconds must be >= 1 to comply with Delicious.com's
+            Terms of Use.
+        @type: int
 
         @return: DeliciousUser instance
 
@@ -903,7 +959,7 @@ class DeliciousAPI(object):
 
     def get_urls(self, tag=None, popular=True, max_urls=100, sleep_seconds=1):
         """
-        Returns the list of URLs (of web documents) for a given tag.
+        Returns the list of recent URLs (of web documents) tagged with a given tag.
 
         This is very similar to parsing Delicious' RSS/JSON feeds directly,
         but this function will return up to 2,000 links compared to a maximum
@@ -919,8 +975,8 @@ class DeliciousAPI(object):
 
         @param tag: Retrieve links which have been tagged with the given tag.
             If tag is not set (default), links will be retrieved from the
-            Delicious front page (aka "delicious hotlist").
-        @param type: unicode or str
+            Delicious.com front page (aka "delicious hotlist").
+        @param type: unicode/str
 
         @param popular: If true (default), retrieve only popular links (i.e.
             /popular/<tag>). Otherwise, the most recent links tagged with
@@ -930,12 +986,12 @@ class DeliciousAPI(object):
             of popular tags to contain only up to a maximum of 15 URLs.
             This also means that setting max_urls to values larger than 15
             will not change the results of get_urls().
-            So if you are interested in more URLs, set the popular parameter
+            So if you are interested in more URLs, set the "popular" parameter
             to false.
 
             Note that if you set popular to False, the returned list of URLs
-            might contain duplicate items. This is due to the way Delicious'
-            creates its /tag/<tag> web pages. So if you need a certain
+            might contain duplicate items. This is due to the way Delicious.com
+            creates its /tag/<tag> Web pages. So if you need a certain
             number of unique URLs, you have to take care of that in your
             own code.
         @param type: bool
@@ -948,12 +1004,15 @@ class DeliciousAPI(object):
             duplicate items.
         @param type: int
 
-        @param sleep_seconds: Wait the specified number of seconds between
-            subsequent queries in case that there are multiple pages of
-            bookmarks for the given url. Must be greater than or equal to 1
-            to comply with delicious' Terms of Use. The default value is 1.
+        @param sleep_seconds: Optional, default: 1.
+            Wait the specified number of seconds between subsequent queries in
+            case that there are multiple pages of bookmarks for the given url.
+            Must be greater than or equal to 1 to comply with Delicious.com's
+            Terms of Use.
             See also parameter 'max_urls'.
         @param type: int
+
+        @return: The list of recent URLs (of web documents) tagged with a given tag.
 
         """
         assert sleep_seconds >= 1
@@ -1047,7 +1106,10 @@ class DeliciousAPI(object):
         DeliciousAPI uses the official JSON feed of the user. We could use
         RSS here, but the JSON feed has proven to be faster in practice.
 
-        Returns a dictionary mapping tags to their tag counts.
+        @param username: The Delicious.com username.
+        @type: str
+
+        @return: Dictionary mapping tags to their tag counts.
 
         """
         tags = {}
@@ -1079,6 +1141,12 @@ class DeliciousAPI(object):
         characters).
 
         None is treated specially, and returns the empty string.
+
+        @param s: The string that needs to be escaped.
+        @type: str
+
+        @return: The escaped string.
+
         """
         if s is None:
             return ''
