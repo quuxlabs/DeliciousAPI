@@ -181,6 +181,19 @@ class DeliciousURL(object):
 
         total_bookmarks:
             The number of total bookmarks (posts) of the document.
+            Note that the value of total_bookmarks can be greater than the
+            length of "bookmarks" depending on how much (detailed) bookmark
+            data could be retrieved from Delicious.com.
+            
+            Here's some more background information:
+            The value of total_bookmarks is the "real" number of bookmarks of
+            URL "url" stored at Delicious.com as reported by Delicious.com
+            itself (so it's the "ground truth"). On the other hand, the length
+            of "bookmarks" depends on iteratively scraped bookmarking data.
+            Since scraping Delicous.com's Web pages has its limits in practice,
+            this means that DeliciousAPI could most likely not retrieve all
+            available bookmarks. In such a case, the value reported by
+            total_bookmarks is greater than the length of "bookmarks".
 
     """
 
@@ -259,27 +272,27 @@ class DeliciousAPI(object):
             Use an HTTP proxy for HTTP connections. Proxy support for
             HTTPS is not available yet.
             Format: "hostname:port" (e.g., "localhost:8080")
-        @type: str
+        @type http_proxy: str
 
         @param tries: Optional, default: 3.
             Try the specified number of times when downloading a monitored
             document fails. tries must be >= 1. See also wait_seconds.
-        @type: int
+        @type tries: int
 
         @param wait_seconds: Optional, default: 3.
             Wait the specified number of seconds before re-trying to
             download a monitored document. wait_seconds must be >= 0.
             See also tries.
-        @type: int
+        @type wait_seconds: int
 
         @param user_agent: Optional, default: "DeliciousAPI/<version>
             (+http://www.michael-noll.com/wiki/Del.icio.us_Python_API)".
             The User-Agent HTTP Header to use when querying Delicous.com.
-        @type: str
+        @type user_agent: str
 
         @param timeout: Optional, default: 30.
             Set network timeout. timeout must be >= 0.
-        @type: int
+        @type timeout: int
 
         """
         assert tries >= 1
@@ -297,19 +310,19 @@ class DeliciousAPI(object):
         """Queries Delicious.com for information, specified by (query) path.
 
         @param path: The HTTP query path.
-        @type: str
+        @type path: str
 
         @param host: The host to query, default: "delicious.com".
-        @type: str
+        @type host: str
 
         @param user: The Delicious.com username if any, default: None.
-        @type: str
+        @type user: str
 
         @param password: The Delicious.com password of user, default: None.
-        @type: str
+        @type password: str
 
         @param use_ssl: Whether to use SSL encryption or not, default: False.
-        @type: bool
+        @type use_ssl: bool
 
         @return: None on errors (i.e. on all HTTP status other than 200).
             On success, returns the content of the HTML response.
@@ -395,20 +408,20 @@ class DeliciousAPI(object):
         it will take 10 times longer to retrieve 500 bookmarks than 50.
 
         @param url: The URL of the web document to be queried for.
-        @type: str
+        @type url: str
 
         @param max_bookmarks: Optional, default: 50.
             See the documentation of get_bookmarks() for more information
             as get_url() uses get_bookmarks() to retrieve a url's
             bookmarking history.
-        @type: int
+        @type max_bookmarks: int
 
         @param sleep_seconds: Optional, default: 1.
             See the documentation of get_bookmarks() for more information
             as get_url() uses get_bookmarks() to retrieve a url's
             bookmarking history. sleep_seconds must be >= 1 to comply with
             Delicious.com's Terms of Use.
-        @type: int
+        @type sleep_seconds: int
 
         @return: DeliciousURL instance representing the Delicious.com history
             of url.
@@ -486,7 +499,7 @@ class DeliciousAPI(object):
 
         @param username: Delicous.com username for which network information is
             retrieved.
-        @type: unicode/str
+        @type username: unicode/str
 
         @return: Tuple of two lists ([<followees>, [<followers>]), where each list
             contains tuples of (username, tracking_since_timestamp).
@@ -590,11 +603,11 @@ class DeliciousAPI(object):
 
         @param url: The URL of the web document to be queried for.
             Cannot be used together with 'username'.
-        @type: str
+        @type url: str
 
         @param username: The Delicious.com username to be queried for.
             Cannot be used together with 'url'.
-        @type: str
+        @type username: str
 
         @param max_bookmarks: Optional, default: 50.
             Maximum number of bookmarks to retrieve. Set to 0 to disable
@@ -619,7 +632,7 @@ class DeliciousAPI(object):
             the same restrictions as for a URL apply with the exception
             that we can retrieve up to 100 bookmarks per HTTP query
             (instead of only up to 50 per HTTP query for a URL).
-        @type: int
+        @type max_bookmarks: int
 
         @param sleep_seconds: Optional, default: 1.
                 Wait the specified number of seconds between subsequent
@@ -627,7 +640,7 @@ class DeliciousAPI(object):
                 for the given url. sleep_seconds must be >= 1 to comply with
                 Delicious.com's Terms of Use.
                 See also parameter 'max_bookmarks'.
-        @type: int
+        @type sleep_seconds: int
 
         @return: Returns the bookmarks of url or user, respectively.
             For urls, it returns a list of (user, tags, comment, timestamp)
@@ -715,7 +728,7 @@ class DeliciousAPI(object):
         The Python library BeautifulSoup is used to parse the HTML page.
 
         @param data: The HTML source of a URL history Web page on Delicious.com.
-        @type: str
+        @type data: str
 
         @return: list of user bookmarks of the corresponding URL
 
@@ -786,7 +799,7 @@ class DeliciousAPI(object):
         The Python library BeautifulSoup is used to parse the HTML page.
 
         @param data: The HTML source of a user page on Delicious.com.
-        @type: str
+        @type data: str
 
         @return: list of bookmarks of the corresponding user
 
@@ -857,25 +870,25 @@ class DeliciousAPI(object):
         called with a username and password.
 
         @param username: The Delicious.com username.
-        @type: unicode/str
+        @type username: str
 
         @param password: Optional, default: None.
             The user's Delicious.com password. If password is set,
             all communication with Delicious.com is SSL-encrypted.
-        @type: unicode/str
+        @type password: unicode/str
 
         @param max_bookmarks: Optional, default: 50.
             See the documentation of get_bookmarks() for more
             information as get_url() uses get_bookmarks() to
             retrieve a url's bookmarking history.
-        @type: int
+        @type max_bookmarks: int
 
         @param sleep_seconds: Optional, default: 1.
             See the documentation of get_bookmarks() for more information as
             get_url() uses get_bookmarks() to retrieve a url's bookmarking
             history. sleep_seconds must be >= 1 to comply with Delicious.com's
             Terms of Use.
-        @type: int
+        @type sleep_seconds: int
 
         @return: DeliciousUser instance
 
@@ -1107,7 +1120,7 @@ class DeliciousAPI(object):
         RSS here, but the JSON feed has proven to be faster in practice.
 
         @param username: The Delicious.com username.
-        @type: str
+        @type username: str
 
         @return: Dictionary mapping tags to their tag counts.
 
@@ -1143,7 +1156,7 @@ class DeliciousAPI(object):
         None is treated specially, and returns the empty string.
 
         @param s: The string that needs to be escaped.
-        @type: str
+        @type s: str
 
         @return: The escaped string.
 
