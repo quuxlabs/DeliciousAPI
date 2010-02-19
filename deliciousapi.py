@@ -699,7 +699,7 @@ class DeliciousAPI(object):
                     bookmarks.extend(self._extract_bookmarks_from_user_history(data))
 
                 # stop scraping if we already have as many bookmarks as we want
-                if len(bookmarks) >= max_bookmarks:
+                if (len(bookmarks) >= max_bookmarks) and max_bookmarks != 0:
                     break
                 else:
                     # check if there are multiple pages of bookmarks for this
