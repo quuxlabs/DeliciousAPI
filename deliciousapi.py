@@ -50,12 +50,12 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.5.15"
+__version__ = "1.6.0"
 
 import base64
 import cgi
 import datetime
-import md5
+import hashlib
 from operator import itemgetter
 import re
 import socket
@@ -239,7 +239,8 @@ class DeliciousURL(object):
     tags = property(fget=get_tags, doc="Returns a dictionary mapping tags to their tag count")
 
     def get_hash(self):
-        m = md5.new(self.url)
+        m = hashlib.md5()
+        m.update(self.url)
         return m.hexdigest()
     hash = property(fget=get_hash, doc="Returns the MD5 hash of the URL of this document")
 
@@ -433,7 +434,8 @@ class DeliciousAPI(object):
 
         document = DeliciousURL(url)
 
-        m = md5.new(url)
+        m = hashlib.md5()
+        m.update(url)
         hash = m.hexdigest()
 
         path = "/v2/json/urlinfo/%s" % hash
@@ -670,7 +672,8 @@ class DeliciousAPI(object):
 
         path = None
         if url:
-            m = md5.new(url)
+            m = hashlib.md5()
+            m.update(url)
             hash = m.hexdigest()
 
             # path will change later on if there are multiple pages of boomarks
