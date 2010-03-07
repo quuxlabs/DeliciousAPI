@@ -50,7 +50,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.6.1"
+__version__ = "1.6.2"
 
 import base64
 import cgi
@@ -863,11 +863,10 @@ class DeliciousAPI(object):
         bookmark collection (which also includes private bookmarks) is
         retrieved. Data communication is encrypted using SSL in this case.
 
-        If no password is supplied, only the most recent public bookmarks
-        of the user are extracted from his/her JSON feed (up to 100 bookmarks
-        if any). Note that if you want to get the *full* tagging vocabulary
-        of the user even if you don't know the password, you can call
-        get_tags_of_user() instead.
+        If no password is supplied, only the *public* bookmarks of the user
+        are retrieved. Here, the parameter 'max_bookmarks' specifies how
+        many public bookmarks will be retrieved (default: 50). Set the
+        parameter to 0 to retrieve all public bookmarks.
 
         This function can be used to backup all of a user's bookmarks if
         called with a username and password.
@@ -884,6 +883,9 @@ class DeliciousAPI(object):
             See the documentation of get_bookmarks() for more
             information as get_url() uses get_bookmarks() to
             retrieve a url's bookmarking history.
+            The parameter is NOT used when a password is specified
+            because in this case the *full* bookmark collection of
+            a user will be retrieved.
         @type max_bookmarks: int
 
         @param sleep_seconds: Optional, default: 1.
