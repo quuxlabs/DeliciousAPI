@@ -767,7 +767,7 @@ class DeliciousAPI(object):
             user_tags = []
             tagdisplays = bookmark_element.findAll("div", attrs={"class": "tagdisplay"})
             if tagdisplays:
-                spans = tagdisplays[0].findAll("span", attrs={"class": "tag-chain-item-span"})
+                spans = tagdisplays[0].findAll("span", attrs={"class": "tagItem"})
                 for span in spans:
                     tag = span.contents[0]
                     user_tags.append(tag)
@@ -846,7 +846,7 @@ class DeliciousAPI(object):
                 url_tags = []
                 tagdisplays = bookmark_element.findAll("div", attrs={"class": "tagdisplay"})
                 if tagdisplays:
-                    spans = tagdisplays[0].findAll("span", attrs={"class": "tag-chain-item-span"})
+                    spans = tagdisplays[0].findAll("span", attrs={"class": "tagItem"})
                     for span in spans:
                         tag = span.contents[0]
                         url_tags.append(tag)
