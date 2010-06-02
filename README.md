@@ -52,5 +52,8 @@ License
 
 The code is licensed to you under version 2 of the GNU General Public License.
 
+Copyright
+---------
+
 Copyright 2006-2010 Michael G. Noll <http://www.michael-noll.com/>
 
