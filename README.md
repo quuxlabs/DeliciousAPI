@@ -40,7 +40,7 @@ Alternatively, if you downladed the code from the git repository, simply pull th
 Usage
 -----
 
-For now, please have a look at the documentation available at http://www.michael-noll.com/wiki/Del.icio.us_Python_API.
+For now, please refer to the documentation available at http://www.michael-noll.com/wiki/Del.icio.us_Python_API.
 
 Important
 ---------
