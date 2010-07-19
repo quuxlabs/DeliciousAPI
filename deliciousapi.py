@@ -50,7 +50,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.6.3"
+__version__ = "1.6.4"
 
 import base64
 import cgi
@@ -777,20 +777,17 @@ class DeliciousAPI(object):
             if metas:
                 links = metas[0].findAll("a", attrs={"class": "user user-tag"})
                 if links:
-                    user_a = links[0]
-                    spans = user_a.findAll('span')
-                    if spans:
-                        try:
-                            user = spans[0].contents[0]
-                        except IndexError:
-                            # WORKAROUND: it seems there is a bug on Delicious.com where
-                            # sometimes a bookmark is shown in a URL history without any
-                            # associated Delicious username (username is empty); this could
-                            # be caused by special characters in the username or other things
-                            #
-                            # this problem of Delicious is very rare, so we just skip such
-                            # entries until they find a fix
-                            pass
+                    try:
+                        user = links[0]['href'][1:]
+                    except IndexError:
+                        # WORKAROUND: it seems there is a bug on Delicious.com where
+                        # sometimes a bookmark is shown in a URL history without any
+                        # associated Delicious username (username is empty); this could
+                        # be caused by special characters in the username or other things
+                        #
+                        # this problem of Delicious is very rare, so we just skip such
+                        # entries until they find a fix
+                        pass
                     bookmarks.append( (user, user_tags, comment, timestamp) )
 
         return bookmarks
