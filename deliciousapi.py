@@ -765,9 +765,9 @@ class DeliciousAPI(object):
             user_tags = []
             tagdisplays = bookmark_element.findAll("div", attrs={"class": "tagdisplay"})
             if tagdisplays:
-                spans = tagdisplays[0].findAll("span", attrs={"class": "tagItem"})
-                for span in spans:
-                    tag = span.contents[0]
+                aset  = tagdisplays[0].findAll("a", attrs={"class": "tagItem noplay"})
+                for a in aset:
+                    tag = a.contents[0]
                     user_tags.append(tag)
 
             # extract user information
@@ -841,9 +841,9 @@ class DeliciousAPI(object):
                 url_tags = []
                 tagdisplays = bookmark_element.findAll("div", attrs={"class": "tagdisplay"})
                 if tagdisplays:
-                    spans = tagdisplays[0].findAll("span", attrs={"class": "tagItem"})
-                    for span in spans:
-                        tag = span.contents[0]
+                    aset = tagdisplays[0].findAll("a", attrs={"class": "tagItem noplay"})
+                    for a in aset:
+                        tag = a.contents[0]
                         url_tags.append(tag)
 
                 bookmarks.append( (url, url_tags, title, comment, timestamp) )
