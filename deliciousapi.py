@@ -52,7 +52,6 @@ __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
 __version__ = "1.6.4"
 
-import base64
 import cgi
 import datetime
 import hashlib
@@ -61,7 +60,6 @@ import re
 import socket
 import time
 import urllib2
-import xml.dom.minidom
 
 try:
     from BeautifulSoup import BeautifulSoup
