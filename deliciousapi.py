@@ -50,7 +50,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.6.6"
+__version__ = "1.6.7"
 
 import cgi
 import datetime
@@ -830,7 +830,7 @@ class DeliciousAPI(object):
                 datas = bookmark_element.findAll("div", attrs={"class": "data"})
                 if datas:
                     links = datas[0].findAll("a", attrs={"class": re.compile("^taggedlink\s*")})
-                    if links:
+                    if links and links[0].contents:
                         title = links[0].contents[0].strip()
                         url = links[0]['href']
                     divs = datas[0].findAll("div", attrs={"class": "description"})
