@@ -50,7 +50,7 @@ __license__ = "GPLv2"
 __maintainer__ = "Michael G. Noll"
 __status__ = "Development"
 __url__ = "http://www.michael-noll.com/"
-__version__ = "1.6.5"
+__version__ = "1.6.6"
 
 import cgi
 import datetime
@@ -765,7 +765,7 @@ class DeliciousAPI(object):
             user_tags = []
             tagdisplays = bookmark_element.findAll("div", attrs={"class": "tagdisplay"})
             if tagdisplays:
-                aset  = tagdisplays[0].findAll("a", attrs={"class": "tagItem noplay"})
+                aset  = tagdisplays[0].findAll("a", attrs={"class": "tag noplay"})
                 for a in aset:
                     tag = a.contents[0]
                     user_tags.append(tag)
@@ -841,7 +841,7 @@ class DeliciousAPI(object):
                 url_tags = []
                 tagdisplays = bookmark_element.findAll("div", attrs={"class": "tagdisplay"})
                 if tagdisplays:
-                    aset = tagdisplays[0].findAll("a", attrs={"class": "tagItem noplay"})
+                    aset = tagdisplays[0].findAll("a", attrs={"class": "tag noplay"})
                     for a in aset:
                         tag = a.contents[0]
                         url_tags.append(tag)
